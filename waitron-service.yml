@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: waitron
+  labels:
+    app: waitron
+spec:
+  ports:
+  - port: 9090
+    targetPort: 9090
+  selector:
+    app: waitron

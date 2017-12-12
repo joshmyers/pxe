@@ -1,0 +1,17 @@
+hostname: jmyers
+operatingsystem: "16.04"
+preseed: preseed.j2
+finish: finish.j2
+cmdline: "interface=eth0 ipv6.disable=1 url={{ BaseURL }}/template/preseed/{{ Hostname }}/{{ Token }} ramdisk_size=10800 root=/dev/rd/0 rw auto hostname={{ Hostname }} console-setup/ask_detect=false console-setup/layout=UK console-setup/variant=UK keyboard-configuration/layoutcode=gb localechooser/translation/warn-light=true localechooser/translation/warn-severe=true locale=en_GB"
+image_url: http://archive.ubuntu.com/ubuntu/dists/xenial-updates/main/installer-amd64/current/images/netboot/ubuntu-installer/amd64/
+kernel: linux
+initrd: initrd.gz
+network:
+  - name: eth0
+    macaddress: a4:4c:c8:21:7c:44
+params:
+    dns_nameservers: "8.8.8.8"
+    apt_hostname: "pl.archive.ubuntu.com"
+    apt_path: "/ubuntu"
+    ntp_server: "pool.ntp.org"
+    release: "xenial"

@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: waitron
+spec:
+  containers:
+  - image: joshmyers/waitron:49f966b-dirty
+    env:
+    - name: CONFIG_FILE
+      value: "/data/config.yaml"
+    name: waitron
+    ports:
+    - name: http
+      containerPort: 9090
+      protocol: TCP
+    workingDir: /data
+    volumeMounts:
+        - name: data
+          mountPath: /data
+  hostNetwork: true
+  dnsPolicy: ClusterFirstWithHostNet
+  restartPolicy: Always
+  volumes:
+        - name: data
+          hostPath:
+            path: /data

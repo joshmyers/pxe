@@ -1,0 +1,48 @@
+FROM alpine:3.6
+
+MAINTAINER Joshua Myers <joshuajmyers@gmail.com>
+
+ARG WAITRON_SANDBOX=/tmp/sandbox
+ARG WAITRON_CONTEXT="$WAITRON_SANDBOX"/context
+
+COPY . "$WAITRON_CONTEXT"
+
+RUN set -x;                                                                     \
+    set -e;                                                                     \
+                                                                                \
+    apk upgrade --update-cache;                                                 \
+    apk add ca-certificates;                                                    \
+    apk add --virtual .build-deps                                               \
+        git                                                                     \
+        go                                                                      \
+        musl-dev;                                                               \
+                                                                                \
+    # Pixiecore assets                                                          \
+    NAMESPACE=github.com;                                                       \
+    REPO=joshmyers/waitron;                                                     \
+    PKG=waitron;                                                          \
+                                                                                \
+    export GOPATH="$WAITRON_SANDBOX"/go;                                      \
+    export GLIDE_HOME="$WAITRON_SANDBOX";                                     \
+                                                                                \
+    NAMESPACE_PATH="$GOPATH/src/$NAMESPACE";                                    \
+    REPO_PATH="$NAMESPACE_PATH/$REPO";                                          \
+                                                                                \
+    if [ -d "$WAITRON_CONTEXT"/"$PKG" ]; then                                 \
+        echo "Building from local dev copy";                                    \
+        mkdir -p "$NAMESPACE_PATH";                                             \
+        mv -v "$WAITRON_CONTEXT" "$REPO_PATH";                                \
+    else                                                                        \
+        echo "Building from upstream git repo";                                 \
+    fi;                                                                         \
+                                                                                \
+    go get -v -d "$NAMESPACE/$REPO";                                       \
+    cd "$REPO_PATH";                                                            \
+    GOBIN=/usr/local/bin go install -ldflags -s .;                             \
+                                                                                \
+    apk del --purge .build-deps;                                                \
+    rm -rf "$WAITRON_SANDBOX" /var/cache/apk/*;
+
+EXPOSE 9090
+
+ENTRYPOINT ["/usr/local/bin/waitron"]

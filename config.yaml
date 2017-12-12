@@ -1,0 +1,3 @@
+templatepath: /data/templates
+machinepath: /data/machines
+baseurl: http://localhost:9090

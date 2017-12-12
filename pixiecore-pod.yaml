@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pixiecore
+spec:
+  containers:
+  - image: joshmyers/pixiecore:49f966b-dirty
+    args: 
+    - api
+    - http://localhost:9090
+    - --debug 
+    - --dhcp-no-bind
+    name: pixiecore
+    ports:
+    - name: dhcp-proxy
+      containerPort: 67
+      protocol: UDP
+    - name: http
+      containerPort: 8080
+      protocol: TCP
+  hostNetwork: true
+  dnsPolicy: ClusterFirstWithHostNet
+  restartPolicy: Always
